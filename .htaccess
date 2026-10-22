@@ -1,0 +1,21 @@
+Options -Indexes
+RewriteEngine On
+
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+RewriteRule ^(?:backend/(?:config|bin)/|node_modules/|src/) - [F,L,NC]
+RewriteCond %{THE_REQUEST} \s/+starguess-admin/backend/api/index\.php[\s?] [NC]
+RewriteRule ^backend/api/index\.php$ - [F,L]
+
+<FilesMatch "^(\.env|.*\.sql)$">
+  Require all denied
+</FilesMatch>
+
+RewriteRule ^api/v1/?$ backend/api/index.php [QSA,L]
+RewriteRule ^api/v1/(.*)$ backend/api/index.php [QSA,L]
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteRule ^ index.html [L]
